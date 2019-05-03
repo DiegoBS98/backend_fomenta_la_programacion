@@ -1,0 +1,5 @@
+INSERT INTO COMPETICIONES (nombre_competicion, descripcion, plazas, lugar_Evento, dificultad) VALUES('Competicion Feria de Abril', 'Esta vez, queremos juntar a los institutos de la comunidad para celebrar la feria de abril como mas nos gusta, compitiendo y mejorando nuestro aprendizaje a la vez que pasamos un buen rato y disfrutamos posteriormente de una barbacoa entre todos. ',20,'Pabellón 12 IFEMA Feria de Madrid', 2);
+INSERT INTO COMPETICIONES (nombre_competicion, descripcion, plazas, lugar_Evento, dificultad) VALUES('Competicion Navidad', 'En estas fechas tan señaladas, queremos recompensar a nuestros jovenes talentos todo el esfuerzo que hacen con los mayores premios jamás vistos.',50,'Pabellón 11 IFEMA Feria de Madrid', 3);
+
+
+INSERT INTO INSTITUTOS(CIF_INSTITUTO, NOMBRE_INSTITUTO, LOCALIZACION, TELEFONO_CONTACTO, EMAIL_CONTACTO) VALUES('B854875', 'QUEVEDO', 'MADRID', 999999999, 'HOLA@HOLA.COM');
