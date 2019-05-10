@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 
 @Entity(name = "INSTITUTOS")
@@ -24,6 +25,7 @@ public class Instituto {
 	private String localizacion;
 	@Column(name="email_contacto")
 	@NotNull(message = "El email del instituto no puede ser nulo")
+	@Email(message = "Debe ser un email valido")
 	private String email_contacto;
 	@Column(name="telefono_contacto")
 	@NotNull(message = "El telefono del instituto no puede ser nulo")

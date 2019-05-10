@@ -12,7 +12,7 @@ public class Competicion {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long idCompeticion;
-	@Column(name="nombre_competicion")
+	@Column(name="nombre_competicion", nullable = false)
 	@NotNull(message = "El nombre de la competición no puede ser nulo")
 	private String nombreCompeticion;
 	@Column()
