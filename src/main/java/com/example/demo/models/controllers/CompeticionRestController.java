@@ -30,6 +30,7 @@ import com.example.demo.models.dao.ICompeticionDao;
 import com.example.demo.models.dao.IInstitutoDao;
 import com.example.demo.models.entity.Competicion;
 import com.example.demo.models.entity.Instituto;
+import com.example.demo.models.services.ICompeticionService;
 
 @CrossOrigin(origins = {"http://localhost:4200"})
 @RestController
@@ -37,15 +38,60 @@ import com.example.demo.models.entity.Instituto;
 public class CompeticionRestController {
 
 	@Autowired
-	private ICompeticionDao competicionDao;
+	private ICompeticionService competicionService;
 	
 	
 	@GetMapping("/competiciones")
 	public List<Competicion> index(){
-		return competicionDao.findAll();
+		return competicionService.findAll();
+	}
+	
+	@GetMapping("/competiciones/{id}")
+public ResponseEntity<?> show(@PathVariable Long id) {
+		
+		Competicion competicion = null;
+		Map<String, Object> response = new HashMap<>();
+		try {
+			competicion = competicionService.findById(id);
+		}catch(DataAccessException e) {
+			response.put("mensaje", "Error al realizar la consulta en la base de datos");
+			response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+		if(competicion == null) {
+			response.put("mensaje", "La competicion ID: ".concat(id.toString().concat(" no existe en la base de datos!")));
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<Competicion>(competicion, HttpStatus.OK);
+	}
+	@PostMapping("/competiciones")
+	@ResponseStatus(HttpStatus.CREATED)
+	public Competicion create(@RequestBody Competicion competicion) {
+		return competicionService.save(competicion);
+	}
+	
+	@PostMapping("/competiciones/{id}")
+	@ResponseStatus(HttpStatus.CREATED)
+	public Competicion update(@RequestBody Competicion competicion, @PathVariable Long id){
+		Competicion actual = new Competicion();
+		actual.setNombreCompeticion(competicion.getNombreCompeticion());
+		actual.setLugarEvento(competicion.getLugarEvento());
+		actual.setDescripcion(competicion.getDescripcion());
+		actual.setPlazas(competicion.getPlazas());
+		actual.setDificultad(competicion.getDificultad());
+		
+		return competicionService.save(actual);
+	}
+	@DeleteMapping("/cliente/{id}")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void delete(@PathVariable Long id) {
+		competicionService.delete(id);
+	}
+		
 	}
 	
 	
 	
 	
-}
+

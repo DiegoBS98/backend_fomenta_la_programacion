@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 public class Competicion {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long idCompeticion;
+	private long idCompeticion;
 	@Column(name="nombre_competicion")
 	@NotNull(message = "El nombre de la competición no puede ser nulo")
 	private String nombreCompeticion;
@@ -33,9 +33,9 @@ public class Competicion {
 	}
 
 	
-	public Competicion(Long idCompeticion, String nombreCompeticion, String descripcion, int plazas,
+	public Competicion(long idCompeticion, String nombreCompeticion, String descripcion, int plazas,
 			String lugarEvento, int dificultad) {
-		super();
+
 		this.idCompeticion = idCompeticion;
 		this.nombreCompeticion = nombreCompeticion;
 		this.descripcion = descripcion;
@@ -44,11 +44,11 @@ public class Competicion {
 		this.dificultad = dificultad;
 	}
 
-	public Long getIdCompeticion() {
+	public long getIdCompeticion() {
 		return idCompeticion;
 	}
 
-	public void setIdCompeticion(Long idCompeticion) {
+	public void setIdCompeticion(int idCompeticion) {
 		this.idCompeticion = idCompeticion;
 	}
 
@@ -99,18 +99,20 @@ public class Competicion {
 				+ ", dificultad=" + dificultad + "]";
 	}
 
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((descripcion == null) ? 0 : descripcion.hashCode());
 		result = prime * result + dificultad;
-		result = prime * result + ((idCompeticion == null) ? 0 : idCompeticion.hashCode());
+		result = prime * result + (int) (idCompeticion ^ (idCompeticion >>> 32));
 		result = prime * result + ((lugarEvento == null) ? 0 : lugarEvento.hashCode());
 		result = prime * result + ((nombreCompeticion == null) ? 0 : nombreCompeticion.hashCode());
 		result = prime * result + plazas;
 		return result;
 	}
+
 
 	@Override
 	public boolean equals(Object obj) {
@@ -128,10 +130,7 @@ public class Competicion {
 			return false;
 		if (dificultad != other.dificultad)
 			return false;
-		if (idCompeticion == null) {
-			if (other.idCompeticion != null)
-				return false;
-		} else if (!idCompeticion.equals(other.idCompeticion))
+		if (idCompeticion != other.idCompeticion)
 			return false;
 		if (lugarEvento == null) {
 			if (other.lugarEvento != null)
@@ -146,12 +145,6 @@ public class Competicion {
 		if (plazas != other.plazas)
 			return false;
 		return true;
-	}
-	
-	
-	
-	
-	
-	
+	}	
 
 }
