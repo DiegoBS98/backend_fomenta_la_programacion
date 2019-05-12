@@ -41,8 +41,23 @@ public class InstitutoControladorRest {
 	
 	@GetMapping("/institutos/{id}")
 	@ResponseStatus(HttpStatus.OK)
-	public Instituto show(@PathVariable Long id) {
-		return institutoService.findById(id);
+	public ResponseEntity<?> show(@PathVariable Long id) {
+		Instituto instituto = null;
+		Map<String, Object> response = new HashMap<>();
+		try {
+			instituto = institutoService.findById(id);
+		} catch (DataAccessException e) {
+			response.put("mensaje", "Error al realizar la consulta en la base de datos");
+			response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		if (instituto == null) {
+			response.put("mensaje",
+					"El instituto ID: ".concat(id.toString().concat(" no existe en la base de datos!")));
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<Instituto>(instituto, HttpStatus.OK);
 	}
 	
 	@PostMapping("/institutos")
@@ -79,7 +94,7 @@ public class InstitutoControladorRest {
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
 	}
 	
-	@PutMapping("/institutos")
+	/*@PutMapping("/institutos")
 	public Instituto update(@RequestBody Instituto instituto, @PathVariable Long id) {
 		Instituto actual = new Instituto();
 		actual.setNombre(instituto.getNombre());
@@ -89,7 +104,8 @@ public class InstitutoControladorRest {
 		actual.setCif_instituto(instituto.getCif_instituto());
 		
 		return institutoService.save(actual);
-	}
+	}*/
+	
 	
 	@PutMapping("/institutos/{id}")
 	public  ResponseEntity<?> update(@RequestBody Instituto instituto,BindingResult result, @PathVariable Long id) {
@@ -128,7 +144,7 @@ public class InstitutoControladorRest {
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		response.put("mensaje", "El evento ha sido actualizado con exito!");
-		response.put("evento", institutoActualizado);
+		response.put("instituto", institutoActualizado);
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
 	}
 	

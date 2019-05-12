@@ -39,7 +39,7 @@ public class CompeticionRestController {
 
 	@Autowired
 	private ICompeticionService competicionService;
-
+	
 	@GetMapping("/competiciones")
 	public List<Competicion> index() {
 		return competicionService.findAll();
@@ -106,7 +106,7 @@ public class CompeticionRestController {
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
 	}
 
-	@PostMapping("/competiciones/{id}")
+	/*@PostMapping("/competiciones/{id}")
 	public Competicion update(@RequestBody Competicion competicion, @PathVariable Long id) {
 		Competicion actual = new Competicion();
 		actual.setNombreCompeticion(competicion.getNombreCompeticion());
@@ -116,7 +116,7 @@ public class CompeticionRestController {
 		actual.setDificultad(competicion.getDificultad());
 
 		return competicionService.save(actual);
-	}
+	}*/
 	/*
 	@DeleteMapping("/competiciones/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
