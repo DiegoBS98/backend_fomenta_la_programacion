@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -40,7 +41,7 @@ public class InstitutoControladorRest {
 	public List<Instituto> index(){
 		return institutoService.findAll();
 	}
-	
+	@Secured({"ROLE_USER","ROLE_ADMIN"})
 	@GetMapping("/institutos/{id}")
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<?> show(@PathVariable Long id) {
@@ -61,7 +62,7 @@ public class InstitutoControladorRest {
 		}
 		return new ResponseEntity<Instituto>(instituto, HttpStatus.OK);
 	}
-	
+	@Secured("ROLE_ADMIN")
 	@PostMapping("/institutos")
 	//La etiqueta requesbody indica que como los datos vendran
 	//en un json, lo mapee a objeto Competicion
@@ -108,7 +109,7 @@ public class InstitutoControladorRest {
 		return institutoService.save(actual);
 	}*/
 	
-	
+	@Secured("ROLE_ADMIN")
 	@PutMapping("/institutos/{id}")
 	public  ResponseEntity<?> update(@Valid @RequestBody Instituto instituto,BindingResult result, @PathVariable Long id) {
 		Instituto institutoActual = institutoService.findById(id);
@@ -150,7 +151,7 @@ public class InstitutoControladorRest {
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
 	}
 	
-	
+	@Secured("ROLE_ADMIN")
 	@DeleteMapping("/institutos/{id}")
 	public ResponseEntity<?> delete(@PathVariable Long id) {
 		Map<String, Object> response = new HashMap<>();
