@@ -20,7 +20,7 @@ public class CompeticionServiceImpl implements ICompeticionService {
 	@Autowired
 	private ICompeticionDao competicionDao;
 	@Override
-	@Transactional(readOnly = true)
+		@Transactional(readOnly = true)
 	public List<Competicion> findAll() {
 		// TODO Auto-generated method stub
 		return (List<Competicion>) competicionDao.findAll();

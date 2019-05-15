@@ -5,22 +5,30 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Entity(name = "COMPETICIONES")
 public class Competicion {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long idCompeticion;
+	
 	@Column(name="nombre_competicion", nullable = false)
 	@NotNull(message = "El nombre de la competición no puede ser nulo")
+	@Size(min = 2)
 	private String nombreCompeticion;
+	
 	@Column()
 	@NotNull(message = "La descipcion de la competición no puede ser nula")
+	@NotEmpty
 	private String descripcion;
+	
 	@Column()
 	@NotNull(message = "La cantidad de plazas no puede ser nula")
 	private int plazas;
+	
 	@Column(name="lugar_evento")
 	@NotNull(message = "El lugar del evento no puede ser nulo")
 	private String lugarEvento;

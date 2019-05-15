@@ -39,7 +39,6 @@ public class CompeticionRestController {
 
 	@Autowired
 	private ICompeticionService competicionService;
-	
 	@GetMapping("/competiciones")
 	public List<Competicion> index() {
 		return competicionService.findAll();
@@ -75,12 +74,21 @@ public class CompeticionRestController {
 	@PostMapping("/competiciones")
 	//La etiqueta requesbody indica que como los datos vendran
 	//en un json, lo mapee a objeto Competicion
-	public ResponseEntity<?> create(@RequestBody Competicion competicion, BindingResult result) {
+	//la etiqueta valid la utilizamos para que se validen los campos antes de ejecutar el metodo
+	//El parametro bindingresult es que objeto que contiene todos los mensajes de errores
+	
+	/**
+	 *  
+	 * @param competicion
+	 * @param result
+	 * @return
+	 */
+	public ResponseEntity<?> create(@Valid @RequestBody Competicion competicion, BindingResult result) {
 		//Utilizamos un hasmap para guardar los mensajes de error
 		Competicion nuevo = null;
 		Map<String, Object> response = new HashMap<>();
 		
-		
+		//Ejemplo de programacion funcional
 		if(result.hasErrors()) {
 			List<String> errores = result.getFieldErrors()
 					.stream().
@@ -125,7 +133,7 @@ public class CompeticionRestController {
 	}*/
 	
 	@PutMapping("/competiciones/{id}")
-	public  ResponseEntity<?> update(@RequestBody Competicion competicion,BindingResult result, @PathVariable Long id) {
+	public  ResponseEntity<?> update(@Valid @RequestBody Competicion competicion,BindingResult result, @PathVariable Long id) {
 		Competicion competicionActual = competicionService.findById(id);
 		Competicion competicionActualizada = null;
 		Map<String, Object> response = new HashMap<>();
@@ -134,7 +142,7 @@ public class CompeticionRestController {
 			List<String> errores = result.getFieldErrors()
 					.stream().
 					map(
-					err -> "El campo '"+ err.getField() +"' "+err.getDefaultMessage()
+					err -> "El campo '"+err.getDefaultMessage()
 					).collect(Collectors.toList());
 			response.put("errores", errores);
 			return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);

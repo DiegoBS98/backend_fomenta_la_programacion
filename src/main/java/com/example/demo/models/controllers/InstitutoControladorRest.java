@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -63,7 +65,7 @@ public class InstitutoControladorRest {
 	@PostMapping("/institutos")
 	//La etiqueta requesbody indica que como los datos vendran
 	//en un json, lo mapee a objeto Competicion
-	public ResponseEntity<?> create(@RequestBody Instituto instituto, BindingResult result) {
+	public ResponseEntity<?> create(@Valid @RequestBody Instituto instituto, BindingResult result) {
 		//Utilizamos un hasmap para guardar los mensajes de error
 		Instituto nuevo = null;
 		Map<String, Object> response = new HashMap<>();
@@ -108,7 +110,7 @@ public class InstitutoControladorRest {
 	
 	
 	@PutMapping("/institutos/{id}")
-	public  ResponseEntity<?> update(@RequestBody Instituto instituto,BindingResult result, @PathVariable Long id) {
+	public  ResponseEntity<?> update(@Valid @RequestBody Instituto instituto,BindingResult result, @PathVariable Long id) {
 		Instituto institutoActual = institutoService.findById(id);
 		Instituto institutoActualizado = null;
 		Map<String, Object> response = new HashMap<>();

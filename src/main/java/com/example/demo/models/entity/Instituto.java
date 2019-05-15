@@ -31,11 +31,28 @@ public class Instituto {
 	@NotNull(message = "El telefono del instituto no puede ser nulo")
 	private int telefono_contacto;
 	
+	
 	public Instituto() {
 		
 	}
-
 	
+	
+
+	public Instituto(@NotNull(message = "El ID no puede ser nulo") long id_instituto,
+			@NotNull(message = "El CIF del instituto no puede ser nulo") String cif_instituto,
+			@NotNull(message = "El nombre del instituto no puede ser nulo") String nombre,
+			@NotNull(message = "La localización del instituto no puede ser nula") String localizacion,
+			@NotNull(message = "El email del instituto no puede ser nulo") @Email(message = "Debe ser un email valido") String email_contacto,
+			@NotNull(message = "El telefono del instituto no puede ser nulo") int telefono_contacto) {
+		this.id_instituto = id_instituto;
+		this.cif_instituto = cif_instituto;
+		this.nombre = nombre;
+		this.localizacion = localizacion;
+		this.email_contacto = email_contacto;
+		this.telefono_contacto = telefono_contacto;
+	}
+
+
 
 	public long getId_instituto() {
 		return id_instituto;
