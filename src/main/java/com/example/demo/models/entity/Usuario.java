@@ -13,7 +13,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -37,6 +36,7 @@ public class Usuario implements Serializable {
 	private String password;
 	@Column(name = "EMAIL_USUARIO")
 	private String emailUsuario;
+	
 	
 	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinTable(name="usuarios_roles", joinColumns = @JoinColumn(name="idUsuario"),
