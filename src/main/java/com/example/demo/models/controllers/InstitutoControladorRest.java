@@ -97,17 +97,6 @@ public class InstitutoControladorRest {
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
 	}
 	
-	/*@PutMapping("/institutos")
-	public Instituto update(@RequestBody Instituto instituto, @PathVariable Long id) {
-		Instituto actual = new Instituto();
-		actual.setNombre(instituto.getNombre());
-		actual.setLocalizacion(instituto.getLocalizacion());
-		actual.setTelefono_contacto(instituto.getTelefono_contacto());
-		actual.setEmail_contacto(instituto.getEmail_contacto());
-		actual.setCif_instituto(instituto.getCif_instituto());
-		
-		return institutoService.save(actual);
-	}*/
 	
 	@Secured("ROLE_ADMIN")
 	@PutMapping("/institutos/{id}")

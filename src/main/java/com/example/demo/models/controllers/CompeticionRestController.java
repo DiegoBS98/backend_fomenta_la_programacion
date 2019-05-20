@@ -40,6 +40,7 @@ public class CompeticionRestController {
 
 	@Autowired
 	private ICompeticionService competicionService;
+	
 	@GetMapping("/competiciones")
 	public List<Competicion> index() {
 		return competicionService.findAll();

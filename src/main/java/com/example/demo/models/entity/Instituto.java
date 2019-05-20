@@ -1,15 +1,30 @@
 package com.example.demo.models.entity;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 
+
+
 @Entity(name = "INSTITUTOS")
-public class Instituto {
+public class Instituto  implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	@Id
 	@NotNull(message = "El ID no puede ser nulo")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,8 +46,11 @@ public class Instituto {
 	@NotNull(message = "El telefono del instituto no puede ser nulo")
 	private int telefono_contacto;
 	
+	@OneToMany(mappedBy="instituto", cascade = CascadeType.ALL)
 	
-	public Instituto() {
+	private List<Usuario> usuarios = new ArrayList<>();;
+	
+	public Instituto(){
 		
 	}
 	
