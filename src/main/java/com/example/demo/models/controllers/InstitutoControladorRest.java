@@ -28,20 +28,21 @@ import com.example.demo.models.dao.IInstitutoDao;
 import com.example.demo.models.entity.Competicion;
 import com.example.demo.models.entity.Instituto;
 import com.example.demo.models.services.IInstitutoService;
-@CrossOrigin(origins = {"http://localhost:4200"})
+
+@CrossOrigin(origins = { "http://localhost:4200" })
 @RestController
 @RequestMapping("/")
 public class InstitutoControladorRest {
 
-	
 	@Autowired
 	private IInstitutoService institutoService;
-	
+
 	@GetMapping("/institutos")
-	public List<Instituto> index(){
+	public List<Instituto> index() {
 		return institutoService.findAll();
 	}
-	@Secured({"ROLE_USER","ROLE_ADMIN"})
+
+	@Secured({ "ROLE_USER", "ROLE_ADMIN" })
 	@GetMapping("/institutos/{id}")
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<?> show(@PathVariable Long id) {
@@ -62,75 +63,70 @@ public class InstitutoControladorRest {
 		}
 		return new ResponseEntity<Instituto>(instituto, HttpStatus.OK);
 	}
+
 	@Secured("ROLE_ADMIN")
 	@PostMapping("/institutos")
-	//La etiqueta requesbody indica que como los datos vendran
-	//en un json, lo mapee a objeto Competicion
+	// La etiqueta requesbody indica que como los datos vendran
+	// en un json, lo mapee a objeto Competicion
 	public ResponseEntity<?> create(@Valid @RequestBody Instituto instituto, BindingResult result) {
-		//Utilizamos un hasmap para guardar los mensajes de error
+		// Utilizamos un hasmap para guardar los mensajes de error
 		Instituto nuevo = null;
 		Map<String, Object> response = new HashMap<>();
-		
-		
-		if(result.hasErrors()) {
-			List<String> errores = result.getFieldErrors()
-					.stream().
-					map(
-					err -> "El campo '"+ err.getField() +"' "+err.getDefaultMessage()
-					).collect(Collectors.toList());
+
+		if (result.hasErrors()) {
+			List<String> errores = result.getFieldErrors().stream()
+					.map(err -> "El campo '" + err.getField() + "' " + err.getDefaultMessage())
+					.collect(Collectors.toList());
 			response.put("errores", errores);
-			return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.BAD_REQUEST);
 		}
-		
-		
+
 		try {
 			nuevo = institutoService.save(instituto);
-		}catch( DataAccessException e) {
-			
+		} catch (DataAccessException e) {
+
 			response.put("mensaje", "error al realizar el insert en la base de datos");
 			response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		
+
 		response.put("mensaje", "El instituto ha sido añadido con exito!");
 		response.put("instituto", nuevo);
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
 	}
-	
-	
+
 	@Secured("ROLE_ADMIN")
 	@PutMapping("/institutos/{id}")
-	public  ResponseEntity<?> update(@Valid @RequestBody Instituto instituto,BindingResult result, @PathVariable Long id) {
+	public ResponseEntity<?> update(@Valid @RequestBody Instituto instituto, BindingResult result,
+			@PathVariable Long id) {
 		Instituto institutoActual = institutoService.findById(id);
 		Instituto institutoActualizado = null;
 		Map<String, Object> response = new HashMap<>();
-		
-		if(result.hasErrors()) {
-			List<String> errores = result.getFieldErrors()
-					.stream().
-					map(
-					err -> "El campo '"+ err.getField() +"' "+err.getDefaultMessage()
-					).collect(Collectors.toList());
+
+		if (result.hasErrors()) {
+			List<String> errores = result.getFieldErrors().stream()
+					.map(err -> "El campo '" + err.getField() + "' " + err.getDefaultMessage())
+					.collect(Collectors.toList());
 			response.put("errores", errores);
-			return new ResponseEntity<Map<String,Object>>(response, HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.BAD_REQUEST);
 		}
-		
-		if(institutoActual == null)
-		{
-			response.put("mensaje", "Error, no se pudo editar: El  instituto ID: ".concat(id.toString().concat(" no existe en la base de datos!")));
+
+		if (institutoActual == null) {
+			response.put("mensaje", "Error, no se pudo editar: El  instituto ID: "
+					.concat(id.toString().concat(" no existe en la base de datos!")));
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
 		}
-		
+
 		try {
 			institutoActual.setNombre(instituto.getNombre());
 			institutoActual.setLocalizacion(instituto.getLocalizacion());
 			institutoActual.setCif_instituto(instituto.getCif_instituto());
 			institutoActual.setTelefono_contacto(instituto.getTelefono_contacto());
 			institutoActual.setEmail_contacto(instituto.getEmail_contacto());
-			
+
 			institutoActualizado = institutoService.save(institutoActual);
-				
-		}catch( DataAccessException e) {
+
+		} catch (DataAccessException e) {
 			response.put("mensaje", "Error al actualizar en la base de datos");
 			response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -139,14 +135,14 @@ public class InstitutoControladorRest {
 		response.put("instituto", institutoActualizado);
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
 	}
-	
+
 	@Secured("ROLE_ADMIN")
 	@DeleteMapping("/institutos/{id}")
 	public ResponseEntity<?> delete(@PathVariable Long id) {
 		Map<String, Object> response = new HashMap<>();
-		try{
+		try {
 			institutoService.delete(id);
-		}catch(DataAccessException e ) {
+		} catch (DataAccessException e) {
 			response.put("mensaje", "Error al eliminar en la base de datos");
 			response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -157,6 +153,6 @@ public class InstitutoControladorRest {
 		 * por eso no lo comprobamos nosotros
 		 */
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
-		
+
 	}
 }

@@ -10,12 +10,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.models.dao.IInstitutoDao;
 import com.example.demo.models.entity.Instituto;
+
 @Service
 public class InstitutoServiceImpl implements IInstitutoService {
 
 	@Autowired
 	private IInstitutoDao institutoDao;
-	
+
 	@Override
 	@Transactional(readOnly = true)
 	public List<Instituto> findAll() {

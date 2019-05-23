@@ -19,34 +19,37 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.models.dao.IUsuarioDao;
 import com.example.demo.models.entity.Usuario;
+
 @Service
 public class UsuarioService implements IUsuarioService, UserDetailsService {
 	@Autowired
 	private IUsuarioDao usuarioDao;
 	private Logger logger = LoggerFactory.getLogger(UsuarioService.class);
+
 	@Override
 	@Transactional(readOnly = true)
 	public UserDetails loadUserByUsername(String nombreUsuario) throws UsernameNotFoundException {
-			
+
 		Usuario usuario = usuarioDao.findByNombreUsuario(nombreUsuario);
-		//Con el metodo Stream convertimos la respuesta en un flujo para poder mapear a lo que necesitemos
-		//con el metodo map.
-		
-		if(usuario == null) {
-			logger.error("Error en el login: no existe el usuario '"+nombreUsuario+"' en el sistema!");
-			throw new UsernameNotFoundException("Error en el login: no existe el usuario '"+nombreUsuario+"' en el sistema!");
+		// Con el metodo Stream convertimos la respuesta en un flujo para poder mapear a
+		// lo que necesitemos
+		// con el metodo map.
+
+		if (usuario == null) {
+			logger.error("Error en el login: no existe el usuario '" + nombreUsuario + "' en el sistema!");
+			throw new UsernameNotFoundException(
+					"Error en el login: no existe el usuario '" + nombreUsuario + "' en el sistema!");
 		}
-		
-		List<GrantedAuthority> permisos = usuario.getRoles()
-				.stream()
+
+		List<GrantedAuthority> permisos = usuario.getRoles().stream()
 				.map(rol -> new SimpleGrantedAuthority(rol.getNombre()))
-				.peek(permiso -> logger.info("Role: "+ permiso.getAuthority())).collect(Collectors.toList());
+				.peek(permiso -> logger.info("Role: " + permiso.getAuthority())).collect(Collectors.toList());
 		return new User(usuario.getNombreUsuario(), usuario.getPassword(), true, true, true, true, permisos);
 	}
-	
-	@Transactional(readOnly=true)
+
+	@Transactional(readOnly = true)
 	public Usuario findByNombreUsuario(String username) {
 		return usuarioDao.findByNombreUsuario(username);
 	}
-	
-} 
+
+}

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,16 +12,17 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.demo.models.dao.ICompeticionDao;
 import com.example.demo.models.entity.Competicion;
 
-
 @Service
 public class CompeticionServiceImpl implements ICompeticionService {
 	/**
-	 * Inyectamos dependencias del cliente sobre el que se van a realizar las acciones
+	 * Inyectamos dependencias del cliente sobre el que se van a realizar las
+	 * acciones
 	 */
 	@Autowired
 	private ICompeticionDao competicionDao;
+
 	@Override
-		@Transactional(readOnly = true)
+	@Transactional(readOnly = true)
 	public List<Competicion> findAll() {
 		// TODO Auto-generated method stub
 		return (List<Competicion>) competicionDao.findAll();
@@ -34,7 +36,7 @@ public class CompeticionServiceImpl implements ICompeticionService {
 
 	@Override
 	@Transactional
-	public Competicion save(Competicion competicion) {		
+	public Competicion save(Competicion competicion) {
 		return competicionDao.save(competicion);
 	}
 

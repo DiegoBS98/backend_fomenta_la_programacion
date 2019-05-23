@@ -8,8 +8,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
 @Entity
-@Table(name="roles")
+@Table(name = "roles")
 public class Rol implements Serializable {
 	/**
 	 * 
@@ -18,11 +19,11 @@ public class Rol implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-	@Column(unique=true)
+	@Column(unique = true)
 	private String nombre;
-	
+
 	public Rol() {
-		
+
 	}
 
 	public Rol(int id, String nombre) {
@@ -78,6 +79,5 @@ public class Rol implements Serializable {
 			return false;
 		return true;
 	}
-	
-	
+
 }

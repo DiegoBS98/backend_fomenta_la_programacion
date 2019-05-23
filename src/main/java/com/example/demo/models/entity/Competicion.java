@@ -14,35 +14,34 @@ public class Competicion {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long idCompeticion;
-	
-	@Column(name="nombre_competicion", nullable = false)
+
+	@Column(name = "nombre_competicion", nullable = false)
 	@NotNull(message = "El nombre de la competición no puede ser nulo")
 	@Size(min = 2)
 	private String nombreCompeticion;
-	
+
 	@Column()
 	@NotNull(message = "La descipcion de la competición no puede ser nula")
 	@NotEmpty
 	private String descripcion;
-	
+
 	@Column()
 	@NotNull(message = "La cantidad de plazas no puede ser nula")
 	private int plazas;
-	
-	@Column(name="lugar_evento")
+
+	@Column(name = "lugar_evento")
 	@NotNull(message = "El lugar del evento no puede ser nulo")
 	private String lugarEvento;
 	@Column()
 	@NotNull(message = "La dificultad no puede ser nula")
 	private int dificultad;
-	
+
 	public Competicion() {
 
 	}
 
-	
-	public Competicion(long idCompeticion, String nombreCompeticion, String descripcion, int plazas,
-			String lugarEvento, int dificultad) {
+	public Competicion(long idCompeticion, String nombreCompeticion, String descripcion, int plazas, String lugarEvento,
+			int dificultad) {
 
 		this.idCompeticion = idCompeticion;
 		this.nombreCompeticion = nombreCompeticion;
@@ -107,7 +106,6 @@ public class Competicion {
 				+ ", dificultad=" + dificultad + "]";
 	}
 
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -120,7 +118,6 @@ public class Competicion {
 		result = prime * result + plazas;
 		return result;
 	}
-
 
 	@Override
 	public boolean equals(Object obj) {
@@ -153,6 +150,6 @@ public class Competicion {
 		if (plazas != other.plazas)
 			return false;
 		return true;
-	}	
+	}
 
 }
