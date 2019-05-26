@@ -1,9 +1,15 @@
 package com.example.demo.models.controllers;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
@@ -25,8 +31,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.models.dao.ICompeticionDao;
 import com.example.demo.models.dao.IInstitutoDao;
@@ -52,6 +60,49 @@ public class CompeticionRestController {
 		Pageable pageable = PageRequest.of(page, 4);
 		return competicionService.findAll(pageable);
 	}
+	
+	@PostMapping("/competiciones/upload")
+	public ResponseEntity<?> upload(@RequestParam("archivo") MultipartFile archivo, @RequestParam("id") Long id){
+		Map<String, Object> response = new HashMap<>();
+		
+		Competicion competicion = competicionService.findById(id);
+		
+		if(!archivo.isEmpty()) {
+			String nombreArchivo = UUID.randomUUID().toString() + "_" +  archivo.getOriginalFilename().replace(" ", "");
+			
+			Path rutaArchivo = Paths.get("uploads").resolve(nombreArchivo).toAbsolutePath();
+			//log.info(rutaArchivo.toString());
+			
+			try {
+				Files.copy(archivo.getInputStream(), rutaArchivo);
+			} catch (IOException e) {
+				response.put("mensaje", "Error al subir la imagen del cliente " + nombreArchivo);
+				response.put("error", e.getMessage().concat(": ").concat(e.getCause().getMessage()));
+				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+			
+			String nombreFotoAnterior = competicion.getFoto();
+			
+			if(nombreFotoAnterior !=null && nombreFotoAnterior.length() >0) {
+				Path rutaFotoAnterior = Paths.get("uploads").resolve(nombreFotoAnterior).toAbsolutePath();
+				File archivoFotoAnterior = rutaFotoAnterior.toFile();
+				if(archivoFotoAnterior.exists() && archivoFotoAnterior.canRead()) {
+					archivoFotoAnterior.delete();
+				}
+			}
+			
+			competicion.setFoto(nombreArchivo);
+			
+			competicionService.save(competicion);
+			
+			response.put("evento", competicion);
+			response.put("mensaje", "Has subido correctamente la imagen: " + nombreArchivo);
+			
+		}
+		
+		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
+	}
+	
 
 	@Secured({ "ROLE_USER", "ROLE_ADMIN" })
 	@GetMapping("/competiciones/{id}")
@@ -182,6 +233,17 @@ public class CompeticionRestController {
 	public ResponseEntity<?> delete(@PathVariable Long id) {
 		Map<String, Object> response = new HashMap<>();
 		try {
+			Competicion competicion = competicionService.findById(id);
+			String nombreFotoAnterior = competicion.getFoto();
+			
+			if(nombreFotoAnterior !=null && nombreFotoAnterior.length() >0) {
+				Path rutaFotoAnterior = Paths.get("uploads").resolve(nombreFotoAnterior).toAbsolutePath();
+				File archivoFotoAnterior = rutaFotoAnterior.toFile();
+				if(archivoFotoAnterior.exists() && archivoFotoAnterior.canRead()) {
+					archivoFotoAnterior.delete();
+				}
+			}
+			
 			competicionService.delete(id);
 		} catch (DataAccessException e) {
 			response.put("mensaje", "Error al eliminar en la base de datos");

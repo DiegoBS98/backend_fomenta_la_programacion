@@ -35,13 +35,28 @@ public class Competicion {
 	@Column()
 	@NotNull(message = "La dificultad no puede ser nula")
 	private int dificultad;
+	
+	@Column(name = "foto")
+	private String foto;
 
 	public Competicion() {
 
 	}
+ 
+	public String getFoto() {
+		return foto;
+	}
+
+	public void setFoto(String foto) {
+		this.foto = foto;
+	}
+
+	public void setIdCompeticion(long idCompeticion) {
+		this.idCompeticion = idCompeticion;
+	}
 
 	public Competicion(long idCompeticion, String nombreCompeticion, String descripcion, int plazas, String lugarEvento,
-			int dificultad) {
+			int dificultad, String foto) {
 
 		this.idCompeticion = idCompeticion;
 		this.nombreCompeticion = nombreCompeticion;
@@ -49,6 +64,7 @@ public class Competicion {
 		this.plazas = plazas;
 		this.lugarEvento = lugarEvento;
 		this.dificultad = dificultad;
+		this.foto = foto;
 	}
 
 	public long getIdCompeticion() {

@@ -32,6 +32,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 		// Inicamos que a la ruta que le pasemos con el tipo de peticion indicado todos
 		// tengan permiso
 		http.authorizeRequests().antMatchers(HttpMethod.GET, "/competiciones", "/institutos", "/login","/competiciones/page/{page}").permitAll()
+		.antMatchers(HttpMethod.POST, "/competiciones/upload").permitAll()
 				/*
 				 * .antMatchers(HttpMethod.GET,
 				 * "/competiciones/{id}","/institutos/{id}").hasAnyRole("USER", "ADMIN")
