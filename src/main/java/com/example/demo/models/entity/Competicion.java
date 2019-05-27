@@ -1,10 +1,19 @@
 package com.example.demo.models.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -38,6 +47,8 @@ public class Competicion {
 	
 	@Column(name = "foto")
 	private String foto;
+	
+	
 
 	public Competicion() {
 
@@ -55,10 +66,17 @@ public class Competicion {
 		this.idCompeticion = idCompeticion;
 	}
 
-	public Competicion(long idCompeticion, String nombreCompeticion, String descripcion, int plazas, String lugarEvento,
-			int dificultad, String foto) {
+	
 
-		this.idCompeticion = idCompeticion;
+	
+
+	public Competicion(long idCompeticion,
+			@NotNull(message = "El nombre de la competición no puede ser nulo") @Size(min = 2) String nombreCompeticion,
+			@NotNull(message = "La descipcion de la competición no puede ser nula") @NotEmpty String descripcion,
+			@NotNull(message = "La cantidad de plazas no puede ser nula") int plazas,
+			@NotNull(message = "El lugar del evento no puede ser nulo") String lugarEvento,
+			@NotNull(message = "La dificultad no puede ser nula") int dificultad, String foto) {
+				this.idCompeticion = idCompeticion;
 		this.nombreCompeticion = nombreCompeticion;
 		this.descripcion = descripcion;
 		this.plazas = plazas;

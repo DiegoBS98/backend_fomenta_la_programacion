@@ -53,4 +53,13 @@ public class CompeticionServiceImpl implements ICompeticionService {
 		return competicionDao.findById(id).orElse(null);
 	}
 
+	@Override
+	public void insertarRegistro(long idCompeticion, long idUsuario) {
+	
+		
+		competicionDao.insertarRegistro(idCompeticion, idUsuario);
+		
+	}
+
+	
 }

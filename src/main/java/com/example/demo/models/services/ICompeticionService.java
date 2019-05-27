@@ -18,4 +18,6 @@ public interface ICompeticionService {
 	public void delete(Long id);
 
 	public Competicion findById(Long id);
+	
+	public void insertarRegistro(long idCompeticion, long idUsuario);
 }

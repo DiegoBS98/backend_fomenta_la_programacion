@@ -4,4 +4,6 @@ import com.example.demo.models.entity.Usuario;
 
 public interface IUsuarioService {
 	public Usuario findByNombreUsuario(String nombreUsuario);
+	
+	
 }

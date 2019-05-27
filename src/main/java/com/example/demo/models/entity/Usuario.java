@@ -1,6 +1,7 @@
 package com.example.demo.models.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -46,20 +47,57 @@ public class Usuario implements Serializable {
 			@UniqueConstraint(columnNames = { "idUsuario", "id" }) })
 	private List<Rol> roles;
 
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinTable(name = "usuariosregistrados", joinColumns = @JoinColumn(name = "idUsuario"), inverseJoinColumns = @JoinColumn(name = "idCompeticion"), uniqueConstraints = {
+	@UniqueConstraint(columnNames = { "idCompeticion", "idUsuario" }) })
+	private List<Competicion> usuariosRegistrados = new ArrayList<Competicion>();
+	
 	public Usuario() {
 
 	}
+	
+	
+
+	public Instituto getInstituto() {
+		return instituto;
+	}
+
+
+
+	public void setInstituto(Instituto instituto) {
+		this.instituto = instituto;
+	}
+
+
+
+	public List<Competicion> getUsuariosRegistrados() {
+		return usuariosRegistrados;
+	}
+
+
+
+	public void setUsuariosRegistrados(List<Competicion> usuariosRegistrados) {
+		this.usuariosRegistrados = usuariosRegistrados;
+	}
+
+
+
+	
 
 	public Usuario(int idUsuario, String dni, String nombreUsuario, String apellidoUsuario, String password,
-			String emailUsuario, List<Rol> roles) {
+			String emailUsuario, Instituto instituto, List<Rol> roles, List<Competicion> usuariosRegistrados) {
 		this.idUsuario = idUsuario;
 		this.dni = dni;
 		this.nombreUsuario = nombreUsuario;
 		this.apellidoUsuario = apellidoUsuario;
 		this.password = password;
 		this.emailUsuario = emailUsuario;
+		this.instituto = instituto;
 		this.roles = roles;
+		this.usuariosRegistrados = usuariosRegistrados;
 	}
+
+
 
 	public int getIdUsuario() {
 		return idUsuario;

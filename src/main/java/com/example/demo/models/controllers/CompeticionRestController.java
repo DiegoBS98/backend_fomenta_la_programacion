@@ -2,6 +2,7 @@ package com.example.demo.models.controllers;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -15,10 +16,13 @@ import java.util.stream.Collectors;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -41,6 +45,7 @@ import com.example.demo.models.dao.IInstitutoDao;
 import com.example.demo.models.entity.Competicion;
 import com.example.demo.models.entity.Instituto;
 import com.example.demo.models.services.ICompeticionService;
+import com.example.demo.models.services.IUsuarioService;
 
 @CrossOrigin(origins = { "http://localhost:4200" })
 @RestController
@@ -49,7 +54,9 @@ public class CompeticionRestController {
 
 	@Autowired
 	private ICompeticionService competicionService;
-
+	@Autowired
+	private IUsuarioService usuarioService;
+	
 	@GetMapping("/competiciones")
 	public List<Competicion> index() {
 		return competicionService.findAll();
@@ -60,7 +67,7 @@ public class CompeticionRestController {
 		Pageable pageable = PageRequest.of(page, 4);
 		return competicionService.findAll(pageable);
 	}
-	
+	@Secured("ROLE_ADMIN")
 	@PostMapping("/competiciones/upload")
 	public ResponseEntity<?> upload(@RequestParam("archivo") MultipartFile archivo, @RequestParam("id") Long id){
 		Map<String, Object> response = new HashMap<>();
@@ -103,7 +110,30 @@ public class CompeticionRestController {
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
 	}
 	
-
+	@GetMapping("/uploads/img/{nombreFoto:.+}")
+	public ResponseEntity<Resource> verFoto(@PathVariable String nombreFoto){
+		
+		Path rutaArchivo = Paths.get("uploads").resolve(nombreFoto).toAbsolutePath();
+		
+		
+		Resource recurso = null;
+		
+		try {
+			recurso = new UrlResource(rutaArchivo.toUri());
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+		
+		if(!recurso.exists() && !recurso.isReadable()) {
+			throw new RuntimeException("Error no se pudo cargar la imagen: " + nombreFoto);
+		}
+		HttpHeaders cabecera = new HttpHeaders();
+		cabecera.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + recurso.getFilename() + "\"");
+		
+		return new ResponseEntity<Resource>(recurso, cabecera, HttpStatus.OK);
+	}
+	
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	@Secured({ "ROLE_USER", "ROLE_ADMIN" })
 	@GetMapping("/competiciones/{id}")
 	public ResponseEntity<?> show(@PathVariable Long id) {
@@ -169,6 +199,14 @@ public class CompeticionRestController {
 		response.put("evento", nuevo);
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
 	}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+	@PostMapping("/competiciones/{idCompeticion}/{idUsuario}")
+	public void registrar(@PathVariable Long idCompeticion, @PathVariable Long idUsuario) {
+		competicionService.insertarRegistro(idCompeticion, idUsuario);
+		
+	}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 	/*
 	 * @PostMapping("/competiciones/{id}") public Competicion update(@RequestBody

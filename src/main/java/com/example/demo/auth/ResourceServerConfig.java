@@ -31,8 +31,8 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 	public void configure(HttpSecurity http) throws Exception {
 		// Inicamos que a la ruta que le pasemos con el tipo de peticion indicado todos
 		// tengan permiso
-		http.authorizeRequests().antMatchers(HttpMethod.GET, "/competiciones", "/institutos", "/login","/competiciones/page/{page}").permitAll()
-		.antMatchers(HttpMethod.POST, "/competiciones/upload").permitAll()
+		http.authorizeRequests().antMatchers(HttpMethod.GET, "/competiciones", "/institutos", "/login","/competiciones/page/{page}","/uploads/img/{nombreFoto:.+}").permitAll()
+		.antMatchers(HttpMethod.POST, "/competiciones/upload","/competiciones/{idCompeticion}/{idUsuario}").permitAll()
 				/*
 				 * .antMatchers(HttpMethod.GET,
 				 * "/competiciones/{id}","/institutos/{id}").hasAnyRole("USER", "ADMIN")
