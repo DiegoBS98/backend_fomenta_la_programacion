@@ -17,5 +17,5 @@ public interface ICompeticionDao extends JpaRepository<Competicion, Long >{
 	@Modifying
 	@Transactional
 	@Query( value="insert into usuariosregistrados(id_competicion, id_usuario) values(:idCompeticion, :idUsuario)" , nativeQuery=true)
-	public void insertarRegistro(long idCompeticion, long idUsuario);
+	public void insertarRegistro(long idCompeticion, int idUsuario);
 }

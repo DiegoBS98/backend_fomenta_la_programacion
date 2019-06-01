@@ -19,5 +19,5 @@ public interface ICompeticionService {
 
 	public Competicion findById(Long id);
 	
-	public void insertarRegistro(long idCompeticion, long idUsuario);
+	public void insertarRegistro(long idCompeticion, int idUsuario);
 }

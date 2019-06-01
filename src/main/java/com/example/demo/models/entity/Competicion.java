@@ -75,14 +75,14 @@ public class Competicion {
 			@NotNull(message = "La descipcion de la competición no puede ser nula") @NotEmpty String descripcion,
 			@NotNull(message = "La cantidad de plazas no puede ser nula") int plazas,
 			@NotNull(message = "El lugar del evento no puede ser nulo") String lugarEvento,
-			@NotNull(message = "La dificultad no puede ser nula") int dificultad, String foto) {
+			@NotNull(message = "La dificultad no puede ser nula") int dificultad) {
 				this.idCompeticion = idCompeticion;
 		this.nombreCompeticion = nombreCompeticion;
 		this.descripcion = descripcion;
 		this.plazas = plazas;
 		this.lugarEvento = lugarEvento;
 		this.dificultad = dificultad;
-		this.foto = foto;
+		
 	}
 
 	public long getIdCompeticion() {
@@ -146,6 +146,7 @@ public class Competicion {
 		int result = 1;
 		result = prime * result + ((descripcion == null) ? 0 : descripcion.hashCode());
 		result = prime * result + dificultad;
+		result = prime * result + ((foto == null) ? 0 : foto.hashCode());
 		result = prime * result + (int) (idCompeticion ^ (idCompeticion >>> 32));
 		result = prime * result + ((lugarEvento == null) ? 0 : lugarEvento.hashCode());
 		result = prime * result + ((nombreCompeticion == null) ? 0 : nombreCompeticion.hashCode());
@@ -169,6 +170,11 @@ public class Competicion {
 			return false;
 		if (dificultad != other.dificultad)
 			return false;
+		if (foto == null) {
+			if (other.foto != null)
+				return false;
+		} else if (!foto.equals(other.foto))
+			return false;
 		if (idCompeticion != other.idCompeticion)
 			return false;
 		if (lugarEvento == null) {
@@ -185,5 +191,7 @@ public class Competicion {
 			return false;
 		return true;
 	}
+
+	
 
 }

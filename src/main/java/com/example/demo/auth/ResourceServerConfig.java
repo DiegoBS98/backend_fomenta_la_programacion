@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpMethod;
@@ -19,9 +20,12 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
  *
  */
 import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @Configuration
 @EnableResourceServer
+@EnableWebMvc
+@ComponentScan("com.example.demo")
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 	// Aqui damos permisos desde el OAUTH
 	@Override
@@ -31,7 +35,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 	public void configure(HttpSecurity http) throws Exception {
 		// Inicamos que a la ruta que le pasemos con el tipo de peticion indicado todos
 		// tengan permiso
-		http.authorizeRequests().antMatchers(HttpMethod.GET, "/competiciones", "/institutos", "/login","/competiciones/page/{page}","/uploads/img/{nombreFoto:.+}").permitAll()
+		http.authorizeRequests().antMatchers(HttpMethod.GET, "/competiciones", "/institutos", "/login","/competiciones/page/{page}","/uploads/img/{nombreFoto:.+}","/static/images/-no-image.jpg").permitAll()
 		.antMatchers(HttpMethod.POST, "/competiciones/upload","/competiciones/{idCompeticion}/{idUsuario}").permitAll()
 				/*
 				 * .antMatchers(HttpMethod.GET,

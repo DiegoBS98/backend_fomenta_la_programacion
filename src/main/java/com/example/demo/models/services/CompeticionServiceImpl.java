@@ -54,7 +54,7 @@ public class CompeticionServiceImpl implements ICompeticionService {
 	}
 
 	@Override
-	public void insertarRegistro(long idCompeticion, long idUsuario) {
+	public void insertarRegistro(long idCompeticion, int idUsuario) {
 	
 		
 		competicionDao.insertarRegistro(idCompeticion, idUsuario);

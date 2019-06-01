@@ -30,6 +30,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -40,11 +41,12 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.example.demo.models.dao.ICompeticionDao;
-import com.example.demo.models.dao.IInstitutoDao;
+
+
 import com.example.demo.models.entity.Competicion;
 import com.example.demo.models.entity.Instituto;
 import com.example.demo.models.services.ICompeticionService;
+import com.example.demo.models.services.IUploadService;
 import com.example.demo.models.services.IUsuarioService;
 
 @CrossOrigin(origins = { "http://localhost:4200" })
@@ -54,8 +56,9 @@ public class CompeticionRestController {
 
 	@Autowired
 	private ICompeticionService competicionService;
+
 	@Autowired
-	private IUsuarioService usuarioService;
+	private IUploadService uploadService;
 	
 	@GetMapping("/competiciones")
 	public List<Competicion> index() {
@@ -67,8 +70,8 @@ public class CompeticionRestController {
 		Pageable pageable = PageRequest.of(page, 4);
 		return competicionService.findAll(pageable);
 	}
-	@Secured("ROLE_ADMIN")
-	@PostMapping("/competiciones/upload")
+	
+	/*@PostMapping("/competiciones/upload")
 	public ResponseEntity<?> upload(@RequestParam("archivo") MultipartFile archivo, @RequestParam("id") Long id){
 		Map<String, Object> response = new HashMap<>();
 		
@@ -108,30 +111,59 @@ public class CompeticionRestController {
 		}
 		
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
+	}*/
+	
+	@PostMapping("/competiciones/upload")
+	public ResponseEntity<?> upload(@RequestParam("archivo") MultipartFile archivo, @RequestParam("id") Long id){
+		Map<String, Object> response = new HashMap<>();
+		
+		Competicion competicion = competicionService.findById(id);
+		
+		if(!archivo.isEmpty()) {
+
+			String nombreArchivo = null;
+			try {
+				nombreArchivo = uploadService.copiar(archivo);
+			} catch (IOException e) {
+				response.put("mensaje", "Error al subir la imagen del cliente");
+				response.put("error", e.getMessage().concat(": ").concat(e.getCause().getMessage()));
+				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+			
+			String nombreFotoAnterior = competicion.getFoto();
+			
+			uploadService.eliminar(nombreFotoAnterior);
+						
+			competicion.setFoto(nombreArchivo);
+			
+			competicionService.save(competicion);
+			
+			response.put("evento", competicion);
+			response.put("mensaje", "Has subido correctamente la imagen: " + nombreArchivo);
+			
+		}
+		
+		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
 	}
 	
 	@GetMapping("/uploads/img/{nombreFoto:.+}")
 	public ResponseEntity<Resource> verFoto(@PathVariable String nombreFoto){
-		
-		Path rutaArchivo = Paths.get("uploads").resolve(nombreFoto).toAbsolutePath();
-		
-		
+
 		Resource recurso = null;
 		
 		try {
-			recurso = new UrlResource(rutaArchivo.toUri());
+			recurso = uploadService.cargar(nombreFoto);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
 		
-		if(!recurso.exists() && !recurso.isReadable()) {
-			throw new RuntimeException("Error no se pudo cargar la imagen: " + nombreFoto);
-		}
 		HttpHeaders cabecera = new HttpHeaders();
 		cabecera.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + recurso.getFilename() + "\"");
 		
 		return new ResponseEntity<Resource>(recurso, cabecera, HttpStatus.OK);
 	}
+	
+	
 	
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	@Secured({ "ROLE_USER", "ROLE_ADMIN" })
@@ -163,7 +195,7 @@ public class CompeticionRestController {
 	 * Competicion competicion) { return competicionService.save(competicion); }
 	 */
 
-	@PostMapping("/competiciones")
+	
 	// La etiqueta requesbody indica que como los datos vendran
 	// en un json, lo mapee a objeto Competicion
 	// la etiqueta valid la utilizamos para que se validen los campos antes de
@@ -172,12 +204,12 @@ public class CompeticionRestController {
 	// errores
 
 	@Secured("ROLE_ADMIN")
+	@PostMapping("/competiciones")
 	public ResponseEntity<?> create(@Valid @RequestBody Competicion competicion, BindingResult result) {
 		// Utilizamos un hasmap para guardar los mensajes de error
 		Competicion nuevo = null;
 		Map<String, Object> response = new HashMap<>();
 
-		// Ejemplo de programacion funcional
 		if (result.hasErrors()) {
 			List<String> errores = result.getFieldErrors().stream()
 					.map(err -> "El campo '" + err.getField() + "' " + err.getDefaultMessage())
@@ -195,7 +227,7 @@ public class CompeticionRestController {
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
-		response.put("mensaje", "El evento ha sido creado con exito!");
+		response.put("mensaje", "El evento ha sido añadido con exito!");
 		response.put("evento", nuevo);
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
 	}
@@ -228,43 +260,56 @@ public class CompeticionRestController {
 	 */
 	@Secured("ROLE_ADMIN")
 	@PutMapping("/competiciones/{id}")
-	public ResponseEntity<?> update(@Valid @RequestBody Competicion competicion, BindingResult result,
-			@PathVariable Long id) {
-		Competicion competicionActual = competicionService.findById(id);
-		Competicion competicionActualizada = null;
+
+public ResponseEntity<?> update(@Valid @ModelAttribute Competicion cliente, BindingResult result, @PathVariable Long id) {
+
+		Competicion clienteActual = competicionService.findById(id);
+
+		Competicion clienteUpdated = null;
+
 		Map<String, Object> response = new HashMap<>();
 
-		if (result.hasErrors()) {
-			List<String> errores = result.getFieldErrors().stream().map(err -> "El campo '" + err.getDefaultMessage())
+		if(result.hasErrors()) {
+
+			List<String> errors = result.getFieldErrors()
+					.stream()
+					.map(err -> "El campo '" + err.getField() +"' "+ err.getDefaultMessage())
 					.collect(Collectors.toList());
-			response.put("errores", errores);
+			
+			response.put("errors", errors);
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.BAD_REQUEST);
 		}
-
-		if (competicionActual == null) {
-			response.put("mensaje", "Error, no se pudo editar: El  evento ID: "
+		
+		if (clienteActual == null) {
+			response.put("mensaje", "Error: no se pudo editar, el cliente ID: "
 					.concat(id.toString().concat(" no existe en la base de datos!")));
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
 		}
 
 		try {
-			competicionActual.setNombreCompeticion(competicion.getNombreCompeticion());
-			competicionActual.setDescripcion(competicion.getDescripcion());
-			competicionActual.setLugarEvento(competicion.getLugarEvento());
-			competicionActual.setPlazas(competicion.getPlazas());
-			competicionActual.setDificultad(competicion.getDificultad());
+			clienteActual.setNombreCompeticion(cliente.getNombreCompeticion());
+			clienteActual.setDescripcion(cliente.getDescripcion());
+			clienteActual.setLugarEvento(cliente.getLugarEvento());
+			clienteActual.setPlazas(cliente.getPlazas());
+			clienteActual.setDificultad(cliente.getDificultad());
 
-			competicionActualizada = competicionService.save(competicionActual);
+			clienteUpdated = competicionService.save(clienteActual);
 
 		} catch (DataAccessException e) {
-			response.put("mensaje", "Error al actualizar en la base de datos");
+			response.put("mensaje", "Error al actualizar el cliente en la base de datos");
 			response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		response.put("mensaje", "El evento ha sido actualizado con exito!");
-		response.put("evento", competicionActualizada);
+
+		response.put("mensaje", "El cliente ha sido actualizado con éxito!");
+		response.put("eveento", clienteUpdated);
+
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
 	}
+
+
+
+
 
 	@Secured("ROLE_ADMIN")
 	@DeleteMapping("/competiciones/{id}")
@@ -273,16 +318,9 @@ public class CompeticionRestController {
 		try {
 			Competicion competicion = competicionService.findById(id);
 			String nombreFotoAnterior = competicion.getFoto();
+				uploadService.eliminar(nombreFotoAnterior);
+				competicionService.delete(id);
 			
-			if(nombreFotoAnterior !=null && nombreFotoAnterior.length() >0) {
-				Path rutaFotoAnterior = Paths.get("uploads").resolve(nombreFotoAnterior).toAbsolutePath();
-				File archivoFotoAnterior = rutaFotoAnterior.toFile();
-				if(archivoFotoAnterior.exists() && archivoFotoAnterior.canRead()) {
-					archivoFotoAnterior.delete();
-				}
-			}
-			
-			competicionService.delete(id);
 		} catch (DataAccessException e) {
 			response.put("mensaje", "Error al eliminar en la base de datos");
 			response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
