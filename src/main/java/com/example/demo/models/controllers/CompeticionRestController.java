@@ -233,7 +233,7 @@ public class CompeticionRestController {
 	}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 	@PostMapping("/competiciones/{idCompeticion}/{idUsuario}")
-	public void registrar(@PathVariable Long idCompeticion, @PathVariable Long idUsuario) {
+	public void registrar(@PathVariable Long idCompeticion, @PathVariable int idUsuario) {
 		competicionService.insertarRegistro(idCompeticion, idUsuario);
 		
 	}
