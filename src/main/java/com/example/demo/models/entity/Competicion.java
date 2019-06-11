@@ -18,6 +18,9 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 @Entity(name = "COMPETICIONES")
 public class Competicion {
 	@Id
@@ -48,7 +51,11 @@ public class Competicion {
 	@Column(name = "foto")
 	private String foto;
 	
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "usuariosregistrados", joinColumns = @JoinColumn(name = "idCompeticion"), inverseJoinColumns = @JoinColumn(name = "idUsuario"), uniqueConstraints = {
+	@UniqueConstraint(columnNames = { "idUsuario", "idCompeticion" }) })
 	
+	private List<Usuario> usuariosRegistrados = new ArrayList<Usuario>();
 
 	public Competicion() {
 
@@ -70,19 +77,32 @@ public class Competicion {
 
 	
 
+
+
 	public Competicion(long idCompeticion,
 			@NotNull(message = "El nombre de la competición no puede ser nulo") @Size(min = 2) String nombreCompeticion,
 			@NotNull(message = "La descipcion de la competición no puede ser nula") @NotEmpty String descripcion,
 			@NotNull(message = "La cantidad de plazas no puede ser nula") int plazas,
 			@NotNull(message = "El lugar del evento no puede ser nulo") String lugarEvento,
-			@NotNull(message = "La dificultad no puede ser nula") int dificultad) {
-				this.idCompeticion = idCompeticion;
+			@NotNull(message = "La dificultad no puede ser nula") int dificultad, String foto,
+			List<Usuario> usuariosRegistrados) {
+		super();
+		this.idCompeticion = idCompeticion;
 		this.nombreCompeticion = nombreCompeticion;
 		this.descripcion = descripcion;
 		this.plazas = plazas;
 		this.lugarEvento = lugarEvento;
 		this.dificultad = dificultad;
-		
+		this.foto = foto;
+		this.usuariosRegistrados = usuariosRegistrados;
+	}
+
+	public List<Usuario> getUsuariosRegistrados() {
+		return usuariosRegistrados;
+	}
+
+	public void setUsuariosRegistrados(List<Usuario> usuariosRegistrados) {
+		this.usuariosRegistrados = usuariosRegistrados;
 	}
 
 	public long getIdCompeticion() {

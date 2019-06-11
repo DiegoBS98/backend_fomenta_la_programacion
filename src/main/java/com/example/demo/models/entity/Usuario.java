@@ -18,6 +18,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 @Entity
 @Table(name = "USUARIOS")
 public class Usuario implements Serializable {
@@ -47,10 +50,11 @@ public class Usuario implements Serializable {
 			@UniqueConstraint(columnNames = { "idUsuario", "id" }) })
 	private List<Rol> roles;
 
-	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	/*@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinTable(name = "usuariosregistrados", joinColumns = @JoinColumn(name = "idUsuario"), inverseJoinColumns = @JoinColumn(name = "idCompeticion"), uniqueConstraints = {
 	@UniqueConstraint(columnNames = { "idCompeticion", "idUsuario" }) })
-	private List<Competicion> usuariosRegistrados = new ArrayList<Competicion>();
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	private List<Competicion> usuariosRegistrados = new ArrayList<Competicion>();*/
 	
 	public Usuario() {
 
@@ -70,7 +74,7 @@ public class Usuario implements Serializable {
 
 
 
-	public List<Competicion> getUsuariosRegistrados() {
+	/*public List<Competicion> getUsuariosRegistrados() {
 		return usuariosRegistrados;
 	}
 
@@ -78,14 +82,14 @@ public class Usuario implements Serializable {
 
 	public void setUsuariosRegistrados(List<Competicion> usuariosRegistrados) {
 		this.usuariosRegistrados = usuariosRegistrados;
-	}
+	}*/
 
 
 
 	
 
 	public Usuario(int idUsuario, String dni, String nombreUsuario, String apellidoUsuario, String password,
-			String emailUsuario, Instituto instituto, List<Rol> roles, List<Competicion> usuariosRegistrados) {
+			String emailUsuario, Instituto instituto, List<Rol> roles) {
 		this.idUsuario = idUsuario;
 		this.dni = dni;
 		this.nombreUsuario = nombreUsuario;
@@ -94,7 +98,7 @@ public class Usuario implements Serializable {
 		this.emailUsuario = emailUsuario;
 		this.instituto = instituto;
 		this.roles = roles;
-		this.usuariosRegistrados = usuariosRegistrados;
+		
 	}
 
 
